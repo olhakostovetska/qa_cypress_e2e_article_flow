@@ -1,5 +1,5 @@
 describe('article', () => {
-  // Вбудована функція генерації користувача
+  // Генерація унікального користувача
   function generateUser() {
     const randomNumber = Math.random().toString().slice(2);
     const userName = `test_mate_user${randomNumber}`;
@@ -15,9 +15,9 @@ describe('article', () => {
   beforeEach(() => {
     const { userName, email, password } = generateUser();
 
-    title = userName + ' title';
-    description = userName + ' description';
-    body = userName + ' body';
+    title = `${userName} title`;
+    description = `${userName} description`;
+    body = `${userName} body`;
 
     cy.login(email, userName, password);
   });
@@ -34,15 +34,15 @@ describe('article', () => {
   });
 
   it('Should delete an article', () => {
-    cy.createArticle(title, description, body)
-      .then((response) => {
-        const slug = response.body.article.slug;
-        cy.visit(`https://conduit.mate.academy/article/${slug}`);
-      });
+    cy.createArticle(title, description, body).then((response) => {
+      const slug = response.body.article.slug;
 
-    cy.contains('.btn', 'Delete Article').click();
-    cy.contains('.nav-link', 'Global Feed').should('be.visible');
-    cy.get('.article-preview')
-      .should('contain.text', 'No articles are here... yet.');
+      cy.visit(`https://conduit.mate.academy/article/${slug}`);
+
+      cy.contains('.btn', 'Delete Article').click();
+      cy.contains('.nav-link', 'Global Feed').should('be.visible');
+      cy.get('.article-preview')
+        .should('contain.text', 'No articles are here... yet.');
+    });
   });
 });
